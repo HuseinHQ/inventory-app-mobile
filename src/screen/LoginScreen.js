@@ -5,57 +5,49 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from 'react-native'
-import React, { useState } from 'react'
-import { fonts } from '../utils/fonts'
-import { useNavigation } from '@react-navigation/native'
+} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { fonts } from '../utils/fonts';
+import { useNavigation } from '@react-navigation/native';
 
-import Entypo from 'react-native-vector-icons/Entypo'
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import axios from 'axios'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { BACKEND_URL } from '../../env'
+import Entypo from 'react-native-vector-icons/Entypo';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '../store/user/user.action';
 
 const LoginScreen = () => {
-  const navigation = useNavigation()
-  const [secureEntry, setSecureEntry] = useState(true)
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const accessToken = useSelector(state => state?.user?.accessToken);
+  const error = useSelector(state => state?.user?.error);
+  const [secureEntry, setSecureEntry] = useState(true);
   const [form, setForm] = useState({
     email: '',
     password: '',
-  })
+  });
 
   const handleSignup = () => {
-    navigation.navigate('register')
-  }
+    navigation.navigate('register');
+  };
 
   const onChangeTextHandler = (value, name) => {
     setForm(prev => ({
       ...prev,
       [name]: value,
-    }))
-  }
+    }));
+  };
 
-  const storeToken = async value => {
-    try {
-      await AsyncStorage.setItem('access_token', value)
-    } catch (e) {
-      console.log(e)
-      Alert.alert(JSON.stringify(e))
-    }
-  }
+  const onLoginHandler = () => {
+    dispatch(login(form));
+  };
 
-  const onLoginHandler = async () => {
-    try {
-      const { data } = await axios.post(`${BACKEND_URL}/login`, form, {
-        headers: { 'Content-Type': 'application/json' },
-      })
-      await storeToken(data.access_token)
-      navigation.navigate('main')
-    } catch (error) {
-      console.log(error)
-      Alert.alert(error.response.data.message)
-    }
-  }
+  useEffect(() => {
+    if (accessToken) navigation.reset({ index: 0, routes: [{ name: 'main' }] });
+  }, [accessToken]);
+
+  useEffect(() => {
+    if (error) Alert.alert(error);
+  }, [error]);
 
   return (
     <View style={styles.container}>
@@ -92,7 +84,7 @@ const LoginScreen = () => {
           />
           <TouchableOpacity
             onPress={() => {
-              setSecureEntry(prev => !prev)
+              setSecureEntry(prev => !prev);
             }}>
             {secureEntry ? (
               <Entypo name="eye-with-line" size={20} color="#000000" />
@@ -110,15 +102,15 @@ const LoginScreen = () => {
         <View style={styles.textContainer2}>
           <Text style={styles.accountText}>Belum punya akun?</Text>
           <TouchableOpacity onPress={handleSignup}>
-            <Text style={styles.signupText}>Masuk</Text>
+            <Text style={styles.signupText}>Daftar</Text>
           </TouchableOpacity>
         </View>
       </View>
     </View>
-  )
-}
+  );
+};
 
-export default LoginScreen
+export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -194,4 +186,4 @@ const styles = StyleSheet.create({
     color: '#007BFF',
     fontFamily: fonts.SemiBold,
   },
-})
+});

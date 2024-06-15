@@ -1,56 +1,63 @@
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
-import {
-  Alert,
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { fonts } from '../utils/fonts'
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
-import FontAwesome from 'react-native-vector-icons/FontAwesome'
-import DashboardCard from '../components/DashboardCard'
-import { useNavigation } from '@react-navigation/native'
-import moment from 'moment'
+import React, { useEffect, useState } from 'react';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { fonts } from '../utils/fonts';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import DashboardCard from '../components/DashboardCard';
+import { useNavigation } from '@react-navigation/native';
+import moment from 'moment';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCategories, getItems } from '../store/item/item.action';
+import { getUser, logout } from '../store/user/user.action';
 
 const DashboardScreen = ({ items, categories }) => {
-  const navigation = useNavigation()
+  // hooks
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
 
+  // selector
+  const accessToken = useSelector(state => state.user.accessToken);
+  const dashboardData = useSelector(state => state.item.dashboard);
+  const name = useSelector(state => state.user.name);
+
+  // useEffect
+  useEffect(() => {
+    dispatch(getItems(accessToken));
+    dispatch(getCategories(accessToken));
+    dispatch(getUser(accessToken));
+  }, [dispatch]);
+
+  // function
   const handleLogout = () => {
-    try {
-      Alert.alert('Anda yakin ingin keluar?', 'Anda tidak bisa kembali', [
-        { text: 'Tidak' },
-        {
-          text: 'Iya',
-          onPress: async () => {
-            await AsyncStorage.removeItem('access_token')
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'home' }],
-            })
-          },
+    Alert.alert('Anda yakin ingin keluar?', 'Anda tidak bisa kembali', [
+      { text: 'Tidak' },
+      {
+        text: 'Iya',
+        onPress: () => {
+          dispatch(
+            logout(() =>
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'home' }],
+              }),
+            ),
+          );
         },
-      ])
-    } catch (e) {
-      console.log(e)
-      Alert.alert(JSON.stringify(e))
-    }
-  }
+      },
+    ]);
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
         <View style={styles.profileContainer}>
           <View style={styles.avatar}>
-            <Text style={styles.avatarText}>A</Text>
+            <Text style={styles.avatarText}>{name.split('')[0]}</Text>
           </View>
           <View>
             <Text style={styles.profileName}>Selamat datang,</Text>
-            <Text style={styles.profileRole}>{'TODO'}</Text>
+            <Text style={styles.profileRole}>{name}</Text>
           </View>
         </View>
         <TouchableOpacity onPress={handleLogout}>
@@ -62,26 +69,19 @@ const DashboardScreen = ({ items, categories }) => {
           <DashboardCard
             backgroundColor="#E34F6A"
             title="Jenis Barang"
-            value={items?.length ?? 'N/A'}
+            value={dashboardData?.itemKind ?? 'N/A'}
             image={<MaterialIcons name="inventory" size={30} color="white" />}
           />
           <DashboardCard
             backgroundColor="#E6677B"
             title="Total Kategori"
-            value={categories?.length ?? 'N/A'}
+            value={dashboardData?.totalCategory ?? 'N/A'}
             image={<MaterialIcons name="category" size={30} color="white" />}
           />
           <DashboardCard
             backgroundColor="#717ED4"
             title="Jumlah Seluruh Barang"
-            value={
-              Array.isArray(items)
-                ? items?.reduce(
-                    (currentValue, item) => currentValue + item.quantity,
-                    0,
-                  )
-                : 'N/A'
-            }
+            value={dashboardData?.allItemCount ?? 'N/A'}
             image={
               <FontAwesome name="shopping-basket" size={30} color="white" />
             }
@@ -89,26 +89,14 @@ const DashboardScreen = ({ items, categories }) => {
           <DashboardCard
             backgroundColor="#525AC2"
             title="Barang Masuk Hari Ini"
-            value={
-              Array.isArray(items)
-                ? items?.reduce(
-                    (currentValue, item) =>
-                      currentValue +
-                      (moment(item.createdAt).format('YYYY-MM-DD') ===
-                      moment().format('YYYY-MM-DD')
-                        ? 1
-                        : 0),
-                    0,
-                  )
-                : 'N/A'
-            }
+            value={dashboardData?.incomingGoodsToday ?? 'N/A'}
             image={<FontAwesome name="truck" size={30} color="white" />}
           />
         </View>
       </View>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -167,6 +155,6 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'center',
   },
-})
+});
 
-export default DashboardScreen
+export default DashboardScreen;

@@ -1,48 +1,33 @@
-import React, { useEffect } from 'react'
-import { View, Image, StyleSheet, Alert } from 'react-native'
-import { StackActions } from '@react-navigation/native'
-import splashscreenImg from '../assets/splashscreen.png'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import React, { useEffect } from 'react';
+import { View, Image, StyleSheet, Alert } from 'react-native';
+import { StackActions } from '@react-navigation/native';
+import splashscreenImg from '../assets/splashscreen.png';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector } from 'react-redux';
 
 const SplashScreen = ({ navigation }) => {
+  const accessToken = useSelector(state => state.user.accessToken);
+
   useEffect(() => {
-    let timer = null
-
-    const checkAccessToken = async () => {
-      try {
-        const value = await AsyncStorage.getItem('access_token')
-        timer = setTimeout(() => {
-          if (value !== null) {
-            // value previously stored
-            navigation.reset({ index: 0, routes: [{ name: 'main' }] })
-          } else {
-            // No access_token stored
-            navigation.reset({ index: 0, routes: [{ name: 'home' }] })
-          }
-        }, 2000)
-      } catch (e) {
-        console.log(e)
-        Alert.alert(JSON.stringify(e))
+    const timeout = setTimeout(() => {
+      if (accessToken) {
+        navigation.reset({ index: 0, routes: [{ name: 'main' }] });
+      } else {
+        navigation.reset({ index: 0, routes: [{ name: 'home' }] });
       }
-    }
+    }, 2000);
 
-    checkAccessToken()
-
-    return () => {
-      if (timer) {
-        clearTimeout(timer)
-      }
-    }
-  }, [])
+    return () => clearTimeout(timeout);
+  }, []);
 
   return (
     <View style={styles.container}>
       <Image source={splashscreenImg} style={styles.splashImage} />
     </View>
-  )
-}
+  );
+};
 
-export default SplashScreen
+export default SplashScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -56,4 +41,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-})
+});

@@ -1,22 +1,31 @@
-import React from 'react'
+import React, { useEffect } from 'react';
 import {
   FlatList,
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
-} from 'react-native'
-import ItemCard from '../components/ItemCard'
-import { fonts } from '../utils/fonts'
-import AntDesign from 'react-native-vector-icons/AntDesign'
-import { useNavigation } from '@react-navigation/native'
+} from 'react-native';
+import ItemCard from '../components/ItemCard';
+import { fonts } from '../utils/fonts';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { getItems } from '../store/item/item.action';
 
-export default function ItemsScreen({ items }) {
-  const navigation = useNavigation()
+export default function ItemsScreen() {
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const accessToken = useSelector(state => state.user.accessToken);
+  const items = useSelector(state => state.item.items);
 
   const handleAddItem = () => {
-    navigation.navigate('add')
-  }
+    navigation.navigate('add');
+  };
+
+  useEffect(() => {
+    if (accessToken) dispatch(getItems(accessToken));
+  }, [dispatch]);
 
   return (
     <>
@@ -36,7 +45,7 @@ export default function ItemsScreen({ items }) {
         <AntDesign name="pluscircle" size={50} color="red" />
       </TouchableOpacity>
     </>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -55,4 +64,4 @@ const styles = StyleSheet.create({
     bottom: 20,
     right: 20,
   },
-})
+});

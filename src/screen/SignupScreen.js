@@ -6,56 +6,60 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from 'react-native'
-import React, { useState } from 'react'
-import { fonts } from '../utils/fonts'
-import { useNavigation } from '@react-navigation/native'
-import Entypo from 'react-native-vector-icons/Entypo'
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import { BACKEND_URL } from '../../env'
-import axios from 'axios'
+} from 'react-native';
+import React, { useState } from 'react';
+import { fonts } from '../utils/fonts';
+import { useNavigation } from '@react-navigation/native';
+import Entypo from 'react-native-vector-icons/Entypo';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { BACKEND_URL } from '../../env';
+import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { register } from '../store/user/user.action';
 
 const SignupScreen = () => {
-  const navigation = useNavigation()
-  const [secureEntry, setSecureEntry] = useState([true, true])
+  const navigation = useNavigation();
+  const [secureEntry, setSecureEntry] = useState([true, true]);
+  const dispatch = useDispatch();
+  const error = useSelector(state => state.user.error);
+
   const [form, setForm] = useState({
     name: '',
     email: '',
     password: '',
     password_confirm: '',
-  })
+  });
 
   const onChangeTextHandler = (value, name) => {
     setForm(prev => ({
       ...prev,
       [name]: value,
-    }))
-  }
+    }));
+  };
 
-  const onSignupHandler = async () => {
-    try {
-      console.log(form)
-      const { data } = await axios.post(`${BACKEND_URL}/register`, form, {
-        headers: { 'Content-Type': 'application/json' },
-      })
-
-      Alert.alert('Berhasil register', 'silakan login', [
-        {
-          text: 'OK',
-          onPress: () => {
-            navigation.navigate('login')
-          },
+  const onSignupHandler = () => {
+    dispatch(
+      register(form, {
+        successCallback: () => {
+          Alert.alert('Berhasil register', 'silakan login', [
+            {
+              text: 'OK',
+              onPress: () => {
+                navigation.navigate('login');
+              },
+            },
+          ]);
         },
-      ])
-    } catch (error) {
-      console.log(error)
-      Alert.alert(error.response.data.message)
-    }
-  }
+        errorCallback: () => {
+          Alert.alert(error);
+        },
+      }),
+    );
+  };
 
   const handleLogin = () => {
-    navigation.navigate('login')
-  }
+    navigation.navigate('login');
+  };
 
   return (
     <View style={styles.container}>
@@ -101,7 +105,7 @@ const SignupScreen = () => {
           />
           <TouchableOpacity
             onPress={() => {
-              setSecureEntry(prev => [!prev[0], prev[1]])
+              setSecureEntry(prev => [!prev[0], prev[1]]);
             }}>
             {secureEntry[0] ? (
               <Entypo name="eye-with-line" size={20} color="#000000" />
@@ -123,7 +127,7 @@ const SignupScreen = () => {
           />
           <TouchableOpacity
             onPress={() => {
-              setSecureEntry(prev => [prev[0], !prev[1]])
+              setSecureEntry(prev => [prev[0], !prev[1]]);
             }}>
             {secureEntry[1] ? (
               <Entypo name="eye-with-line" size={20} color="#000000" />
@@ -133,10 +137,10 @@ const SignupScreen = () => {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.loginButtonWrapper}>
-          <Text onPress={onSignupHandler} style={styles.loginText}>
-            Daftar
-          </Text>
+        <TouchableOpacity
+          onPress={onSignupHandler}
+          style={styles.loginButtonWrapper}>
+          <Text style={styles.loginText}>Daftar</Text>
         </TouchableOpacity>
         <View style={styles.textContainer2}>
           <Text style={styles.accountText}>Sudah punya akun?</Text>
@@ -146,10 +150,10 @@ const SignupScreen = () => {
         </View>
       </View>
     </View>
-  )
-}
+  );
+};
 
-export default SignupScreen
+export default SignupScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -221,4 +225,4 @@ const styles = StyleSheet.create({
     color: '#007BFF',
     fontFamily: fonts.SemiBold,
   },
-})
+});
