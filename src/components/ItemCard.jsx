@@ -48,10 +48,13 @@ export default function ItemCard({ item }) {
   const handleEdit = () => {
     navigation.navigate('edit', { item });
   };
+  const goToDetailPage = () => {
+    navigation.navigate('detail', { item });
+  };
 
   return (
     <View style={styles.outer}>
-      <TouchableOpacity style={styles.card}>
+      <TouchableOpacity style={styles.card} onPress={goToDetailPage}>
         <View style={styles.leftContent}>
           <TouchableOpacity onPress={handleChangeImage}>
             <Image

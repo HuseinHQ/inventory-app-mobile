@@ -86,7 +86,8 @@ export const deleteItem =
         },
         timeout: 5000,
       });
-      dispatch(deleteItemSuccess(id));
+      // dispatch(deleteItemSuccess(id));
+      dispatch(getItems(access_token));
     } catch (error) {
       if (error.code === 'ECONNABORTED') {
         console.log('Request timed out');

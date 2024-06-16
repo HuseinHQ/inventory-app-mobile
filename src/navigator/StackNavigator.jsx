@@ -8,6 +8,8 @@ import LoginScreen from '../screen/LoginScreen.js';
 import TabNavigator from './TabNavigator.jsx';
 import AddPage from '../screen/AddPage.jsx';
 import EditPage from '../screen/EditPage.jsx';
+import DetailPage from '../screen/DetailPage.jsx';
+import { fonts } from '../utils/fonts.js';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,6 +26,15 @@ export default function StackNavigator() {
         <Stack.Screen name="main" component={TabNavigator} />
         <Stack.Screen name="add" component={AddPage} />
         <Stack.Screen name="edit" component={EditPage} />
+        <Stack.Screen
+          name="detail"
+          component={DetailPage}
+          options={({ route }) => ({
+            headerShown: true,
+            title: 'Detail ' + route?.params?.item?.name,
+            headerTitleStyle: { fontFamily: fonts.SemiBold },
+          })}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
