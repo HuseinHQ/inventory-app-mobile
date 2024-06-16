@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react';
 import {
   Image,
   StyleSheet,
@@ -6,86 +6,81 @@ import {
   View,
   TouchableOpacity,
   Alert,
-} from 'react-native'
-import { fonts } from '../utils/fonts'
-import noImage from '../assets/no_image.jpg'
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import Entypo from 'react-native-vector-icons/Entypo'
-import axios from 'axios'
-import { BACKEND_URL } from '../../env'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+} from 'react-native';
+import { fonts } from '../utils/fonts';
+import noImage from '../assets/no_image.jpg';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteItem, putImage } from '../store/item/item.action';
+import { useNavigation } from '@react-navigation/native';
 
 export default function ItemCard({ item }) {
-  const [accessToken, setAccessToken] = useState()
+  const accessToken = useSelector(state => state.user.accessToken);
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
 
-  useEffect(() => {
-    const checkAccessToken = async () => {
-      try {
-        const value = await AsyncStorage.getItem('access_token')
-        if (value !== null) {
-          // value previously stored
-          setAccessToken(value)
-        }
-      } catch (e) {
-        console.log('Error', e)
-        Alert.alert(JSON.stringify(e))
-      }
-    }
-
-    checkAccessToken()
-  }, [])
-
-  const handleDelete = async () => {
-    if (!accessToken) {
-      Alert.alert('Invalid Token')
-    }
-
-    try {
-      const { data } = await axios.delete(`${BACKEND_URL}/items/${item.id}`, {
-        headers: {
-          access_token: accessToken,
+  const handleDelete = () => {
+    Alert.alert(
+      `Hapus ${item?.name}`,
+      'Apakah Anda yakin ingin menghapus item ini?',
+      [
+        {
+          text: 'Batal',
         },
-      })
-      console.log(data)
-    } catch (error) {
-      console.log(error)
-      Alert.alert(error.response.data.message)
-    }
-  }
-  const handleEdit = () => {}
+        {
+          text: 'Iya',
+          onPress: () => {
+            dispatch(
+              deleteItem(item.id, accessToken, error => {
+                Alert.alert(error);
+              }),
+            );
+          },
+        },
+      ],
+    );
+  };
+
+  const handleChangeImage = () => {
+    dispatch(putImage(item?.id, accessToken));
+  };
+  const handleEdit = () => {
+    navigation.navigate('edit', { item });
+  };
 
   return (
     <View style={styles.outer}>
       <TouchableOpacity style={styles.card}>
         <View style={styles.leftContent}>
-          <View>
+          <TouchableOpacity onPress={handleChangeImage}>
             <Image
               source={item?.image ? { uri: item?.image } : noImage}
               resizeMode="cover"
               style={styles.image}
             />
-          </View>
+          </TouchableOpacity>
           <View>
             <Text style={[styles.textBlack, styles.title]}>{item?.name}</Text>
             <Text style={[styles.textBlack, styles.quantity]}>
               Jumlah: {item?.quantity}
             </Text>
             <Text style={[styles.textBlack, styles.condition]}>
-              Kondisi: {item?.condition}
+              Kategori: {item?.category}
             </Text>
           </View>
         </View>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={handleDelete}>
+          <TouchableOpacity onPress={handleDelete} style={styles.button}>
             <MaterialCommunityIcons name="delete" size={30} color="red" />
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleEdit}>
+          <TouchableOpacity onPress={handleEdit} style={styles.button}>
             <Entypo name="edit" size={20} color="blue" />
           </TouchableOpacity>
         </View>
       </TouchableOpacity>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -105,7 +100,6 @@ const styles = StyleSheet.create({
   leftContent: {
     flex: 1,
     borderRadius: 10,
-    backgroundColor: 'white',
     flexDirection: 'row',
     padding: 10,
     gap: 20,
@@ -129,6 +123,11 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     justifyContent: 'center',
-    gap: 20,
   },
-})
+  button: {
+    height: 50,
+    width: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

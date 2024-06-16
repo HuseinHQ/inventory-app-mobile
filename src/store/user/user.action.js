@@ -51,9 +51,7 @@ export const login = form => async dispatch => {
   } catch (error) {
     dispatch(userLoading());
     dispatch(userError(error?.response?.data?.message || 'Error'));
-    setTimeout(() => {
-      dispatch(clearError());
-    }, 4000);
+    dispatch(clearError());
   }
 };
 
@@ -96,8 +94,6 @@ export const getUser = access_token => async dispatch => {
     dispatch(userError(error?.response?.data?.message || 'Error'));
   } finally {
     dispatch(userLoading());
-    setTimeout(() => {
-      dispatch(clearError());
-    }, 4000);
+    dispatch(clearError());
   }
 };

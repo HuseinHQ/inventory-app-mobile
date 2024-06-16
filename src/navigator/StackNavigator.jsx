@@ -1,14 +1,15 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { NavigationContainer } from '@react-navigation/native'
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
 
-import HomeScreen from '../screen/HomeScreen.js'
-import SignupScreen from '../screen/SignupScreen.js'
-import SplashScreen from '../screen/splashscreen.js'
-import LoginScreen from '../screen/LoginScreen.js'
-import TabNavigator from './TabNavigator.jsx'
-import AddPage from '../screen/AddPage.jsx'
+import HomeScreen from '../screen/HomeScreen.js';
+import SignupScreen from '../screen/SignupScreen.js';
+import SplashScreen from '../screen/splashscreen.js';
+import LoginScreen from '../screen/LoginScreen.js';
+import TabNavigator from './TabNavigator.jsx';
+import AddPage from '../screen/AddPage.jsx';
+import EditPage from '../screen/EditPage.jsx';
 
-const Stack = createNativeStackNavigator()
+const Stack = createNativeStackNavigator();
 
 export default function StackNavigator() {
   return (
@@ -22,7 +23,8 @@ export default function StackNavigator() {
         <Stack.Screen name="splash" component={SplashScreen} />
         <Stack.Screen name="main" component={TabNavigator} />
         <Stack.Screen name="add" component={AddPage} />
+        <Stack.Screen name="edit" component={EditPage} />
       </Stack.Navigator>
     </NavigationContainer>
-  )
+  );
 }

@@ -32,27 +32,33 @@ export default function ItemsScreen() {
       <FlatList
         data={items}
         renderItem={({ item }) => <ItemCard item={item} key={item.id} />}
-        contentContainerStyle={{ gap: 5, margin: 10, paddingBottom: 20 }}
+        contentContainerStyle={styles.flatlist}
         ListHeaderComponent={
           <>
-            <View style={styles.container}>
+            <View style={styles.headerContainer}>
               <Text style={styles.title}>Daftar Barang</Text>
             </View>
           </>
         }
       />
       <TouchableOpacity onPress={handleAddItem} style={styles.addButton}>
-        <AntDesign name="pluscircle" size={50} color="red" />
+        <AntDesign name="plus" size={16} color="white" />
+        <Text style={styles.text}>Tambah Barang</Text>
       </TouchableOpacity>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  headerContainer: {
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10,
+  },
+  flatlist: {
+    gap: 5,
+    margin: 10,
+    paddingBottom: 60,
   },
   title: {
     color: 'black',
@@ -61,7 +67,19 @@ const styles = StyleSheet.create({
   },
   addButton: {
     position: 'absolute',
-    bottom: 20,
-    right: 20,
+    bottom: 10,
+    right: 10,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#E34F6A',
+    elevation: 2,
+    padding: 10,
+    borderRadius: 100,
+    gap: 5,
+  },
+  text: {
+    color: 'white',
+    fontFamily: fonts.SemiBold,
   },
 });

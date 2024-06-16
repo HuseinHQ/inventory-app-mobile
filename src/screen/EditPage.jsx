@@ -13,19 +13,20 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { fonts } from '../utils/fonts';
 import SelectDropdown from 'react-native-select-dropdown';
 import { useDispatch, useSelector } from 'react-redux';
-import { postItem } from '../store/item/item.action';
+import { postItem, putItem } from '../store/item/item.action';
 
-export default function AddPage({ navigation }) {
+export default function EditPage({ navigation, route }) {
+  const { item } = route.params;
   const dispatch = useDispatch();
   const accessToken = useSelector(state => state.user.accessToken);
 
   const [form, setForm] = useState({
-    name: '',
-    description: '',
-    quantity: 1,
-    category: '',
-    location: '',
-    condition: '', // new or second
+    name: item?.name,
+    description: item?.description,
+    quantity: +item?.quantity,
+    category: item?.category,
+    location: item?.location,
+    condition: item?.condition, // new or second
   });
   const [isFocused, setIsFocused] = useState({
     name: false,
@@ -42,8 +43,8 @@ export default function AddPage({ navigation }) {
 
   const handleSubmit = () => {
     dispatch(
-      postItem(
-        { form, access_token: accessToken },
+      putItem(
+        { id: item.id, form, access_token: accessToken },
         {
           successCallback: message => {
             Alert.alert('Success', message, [
@@ -65,7 +66,7 @@ export default function AddPage({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={30} color="black" />
         </TouchableOpacity>
-        <Text style={styles.title}>Tambah Barang</Text>
+        <Text style={styles.title}>Edit Barang</Text>
       </View>
 
       <TextInput
