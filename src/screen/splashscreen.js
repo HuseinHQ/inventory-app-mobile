@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
-import { View, Image, StyleSheet, Alert } from 'react-native';
-import { StackActions } from '@react-navigation/native';
-import splashscreenImg from '../assets/splashscreen.png';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { View, Image, StyleSheet } from 'react-native';
+import splashscreenImg from '../assets/Logo.png';
 import { useSelector } from 'react-redux';
 
 const SplashScreen = ({ navigation }) => {
@@ -33,10 +31,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   splashImage: {
-    width: '100%',
-    height: '100%',
+    width: '80%',
+    height: '80%',
     resizeMode: 'contain',
     justifyContent: 'center',
     alignItems: 'center',

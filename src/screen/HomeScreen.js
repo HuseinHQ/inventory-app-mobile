@@ -1,22 +1,22 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
-import { fonts } from '../utils/fonts'
-import { useNavigation } from '@react-navigation/native'
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import { fonts } from '../utils/fonts';
+import { useNavigation } from '@react-navigation/native';
+import homePng from '../assets/Home.png';
 
 const HomeScreen = () => {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
 
   const handleLogin = () => {
-    navigation.navigate('login')
-  }
+    navigation.navigate('login');
+  };
 
   const handleSignup = () => {
-    navigation.navigate('register')
-  }
+    navigation.navigate('register');
+  };
   return (
     <View style={styles.container}>
-      <Image source={require('../assets/Logo.png')} style={styles.logo} />
-      <Image source={require('../assets/Home.png')} style={styles.bannerhome} />
+      <Image source={homePng} style={styles.bannerhome} />
       <Text style={styles.title}>INVENTARIS MOBILE</Text>
       <Text style={styles.subtitle}>
         Kelola Inventarismu Dengan Mudah, dan Cepat di Genggaman Tanganmu!
@@ -34,16 +34,17 @@ const HomeScreen = () => {
         </TouchableOpacity>
       </View>
     </View>
-  )
-}
+  );
+};
 
-export default HomeScreen
+export default HomeScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFF',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   logo: {
     height: 75,
@@ -93,4 +94,4 @@ const styles = StyleSheet.create({
     fontFamily: fonts.SemiBold,
     color: '#007BFF',
   },
-})
+});

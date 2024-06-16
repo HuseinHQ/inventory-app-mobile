@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Button,
   TextInput,
   View,
   TouchableOpacity,
   StyleSheet,
-  SectionListComponent,
   Text,
   Alert,
 } from 'react-native';
